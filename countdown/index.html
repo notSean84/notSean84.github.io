@@ -1,87 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-  @font-face {
-    font-family: "Faktum";
-    src: url("Rene%20Bieder%20-%20Faktum%20SemiBold.otf") format("opentype");
-    font-display: swap;
-  }
-  html, body {
-    margin: 0;
-    height: 100%;
-  }
-  .stage {
-    height: 100%;
-    display: grid;
-    place-items: center;
-    background: #dde2e9 url("bg.jpg") center / cover no-repeat;
-    isolation: isolate;
-    overflow: hidden;
-  }
-  #countdown {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    font-family: "Faktum", "DIN Alternate", Arial, sans-serif;
-    font-size: clamp(1.5rem, 11vw, 8rem);
-    color: #fff;
-    mix-blend-mode: difference;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-  .unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .num {
-    line-height: 1.1;
-  }
-  .label {
-    font-size: 0.2em;
-    line-height: 1.4;
-    color: inherit;
-    margin-top: 0.2em;
-  }
-  .sep {
-    line-height: 1.1;
-    padding: 0 0.25em;
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: "Faktum";
+      src: url("Rene%20Bieder%20-%20Faktum%20SemiBold.otf") format("opentype");
+      font-display: swap;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+    }
+
+    .stage {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      background: #dde2e9 url("bg.jpg") center / cover no-repeat;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .wrap {
+      position: relative;
+    }
+
+    .cd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: "Faktum", "DIN Alternate", Arial, sans-serif;
+      font-size: clamp(1.5rem, 11vw, 8rem);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .cd.base {
+      color: #fff;
+      mix-blend-mode: difference;
+      opacity: 0.75;
+    }
+
+    .cd.tint {
+      position: absolute;
+      inset: 0;
+      color: #0F4196;
+      mix-blend-mode: color;
+    }
+
+    .unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .num {
+      line-height: 1.1;
+    }
+
+    .label {
+      font-size: 0.2em;
+      line-height: 1.4;
+      color: inherit;
+      margin-top: 0.2em;
+    }
+
+    .sep {
+      line-height: 1.1;
+      padding: 0 0.25em;
+    }
+  </style>
 </head>
+
 <body>
   <div class="stage">
-    <div id="countdown" aria-live="off">
-      <div class="unit"><span class="num" id="d">00</span><span class="label">Days</span></div>
-      <span class="sep">:</span>
-      <div class="unit"><span class="num" id="h">00</span><span class="label">Hours</span></div>
-      <span class="sep">:</span>
-      <div class="unit"><span class="num" id="m">00</span><span class="label">Minutes</span></div>
-      <span class="sep">:</span>
-      <div class="unit"><span class="num" id="s">00</span><span class="label">Seconds</span></div>
+    <div class="wrap">
+      <div class="cd base" aria-live="off">
+        <div class="unit"><span class="num" data-u="d">00</span><span class="label">Days</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="h">00</span><span class="label">Hours</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="m">00</span><span class="label">Minutes</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="s">00</span><span class="label">Seconds</span></div>
+      </div>
+      <div class="cd tint" aria-hidden="true">
+        <div class="unit"><span class="num" data-u="d">00</span><span class="label">Days</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="h">00</span><span class="label">Hours</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="m">00</span><span class="label">Minutes</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="s">00</span><span class="label">Seconds</span></div>
+      </div>
     </div>
   </div>
-<script>
-  const ziel = new Date("2027-01-11T00:00:00+01:00");
-  const p = n => String(n).padStart(2, "0");
-  const $ = id => document.getElementById(id);
+  <script>
+    const ziel = new Date("2027-01-11T00:00:00+01:00");
+    const p = n => String(n).padStart(2, "0");
+    const $ = id => document.getElementById(id);
 
-  function tick() {
-    let d = Math.max(0, ziel - new Date());
-    const tage = Math.floor(d / 864e5); d %= 864e5;
-    const std  = Math.floor(d / 36e5);  d %= 36e5;
-    const min  = Math.floor(d / 6e4);   d %= 6e4;
-    const sek  = Math.floor(d / 1e3);
-    $("d").textContent = p(tage);
-    $("h").textContent = p(std);
-    $("m").textContent = p(min);
-    $("s").textContent = p(sek);
-  }
-  tick();
-  setInterval(tick, 1000);
-</script>
+    function tick() {
+      let d = Math.max(0, ziel - new Date());
+      const tage = Math.floor(d / 864e5); d %= 864e5;
+      const std = Math.floor(d / 36e5); d %= 36e5;
+      const min = Math.floor(d / 6e4); d %= 6e4;
+      const sek = Math.floor(d / 1e3);
+      const set = (u, v) => document.querySelectorAll(`[data-u="${u}"]`).forEach(e => e.textContent = v);
+      set("d", p(tage));
+      set("h", p(std));
+      set("m", p(min));
+      set("s", p(sek));
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
 </body>
+
 </html>
