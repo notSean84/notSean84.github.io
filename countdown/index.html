@@ -40,17 +40,27 @@
       white-space: nowrap;
     }
 
-    .cd.base {
-      color: #fff;
-      mix-blend-mode: difference;
-      opacity: 0.75;
-    }
-
-    .cd.tint {
+    .cd:not(.base) {
       position: absolute;
       inset: 0;
-      color: #0F4196;
-      mix-blend-mode: color;
+    }
+
+    .cd.base   { color: #fff;    mix-blend-mode: difference; }
+    .cd.tint   { color: #0F4196; mix-blend-mode: color; }
+    
+    .cd.dark   { color: #0F4196; mix-blend-mode: color; }
+    .cd.labels { color: #051939; }
+
+    /* Labels nur in der Label-Ebene sichtbar, Zahlen dort unsichtbar */
+    .base .label,
+    .tint .label,
+    .dark .label {
+      visibility: hidden;
+    }
+
+    .labels .num,
+    .labels .sep {
+      visibility: hidden;
     }
 
     .unit {
@@ -89,21 +99,22 @@
         <span class="sep">:</span>
         <div class="unit"><span class="num" data-u="s">00</span><span class="label">Seconds</span></div>
       </div>
-      <div class="cd tint" aria-hidden="true">
-        <div class="unit"><span class="num" data-u="d">00</span><span class="label">Days</span></div>
-        <span class="sep">:</span>
-        <div class="unit"><span class="num" data-u="h">00</span><span class="label">Hours</span></div>
-        <span class="sep">:</span>
-        <div class="unit"><span class="num" data-u="m">00</span><span class="label">Minutes</span></div>
-        <span class="sep">:</span>
-        <div class="unit"><span class="num" data-u="s">00</span><span class="label">Seconds</span></div>
-      </div>
     </div>
   </div>
   <script>
+    // Ebenen duplizieren (Reihenfolge nicht ändern: Labels müssen zuletzt kommen)
+    const base = document.querySelector(".cd.base");
+    ["tint", "dark", "labels"].forEach(c => {
+      const n = base.cloneNode(true);
+      n.classList.replace("base", c);
+      n.removeAttribute("aria-live");
+      n.setAttribute("aria-hidden", "true");
+      base.parentNode.appendChild(n);
+    });
+
     const ziel = new Date("2027-01-11T00:00:00+01:00");
     const p = n => String(n).padStart(2, "0");
-    const $ = id => document.getElementById(id);
+    const set = (u, v) => document.querySelectorAll(`[data-u="${u}"]`).forEach(e => e.textContent = v);
 
     function tick() {
       let d = Math.max(0, ziel - new Date());
@@ -111,7 +122,6 @@
       const std = Math.floor(d / 36e5); d %= 36e5;
       const min = Math.floor(d / 6e4); d %= 6e4;
       const sek = Math.floor(d / 1e3);
-      const set = (u, v) => document.querySelectorAll(`[data-u="${u}"]`).forEach(e => e.textContent = v);
       set("d", p(tage));
       set("h", p(std));
       set("m", p(min));
