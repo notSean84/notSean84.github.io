@@ -12,9 +12,14 @@
   html, body {
     margin: 0;
     height: 100%;
-    background-color: #dde2e9;
+  }
+  .stage {
+    height: 100%;
     display: grid;
     place-items: center;
+    background: #dde2e9 url("bg.jpg") center / cover no-repeat;
+    isolation: isolate;
+    overflow: hidden;
   }
   #countdown {
     display: flex;
@@ -22,7 +27,8 @@
     justify-content: center;
     font-family: "Faktum", "DIN Alternate", Arial, sans-serif;
     font-size: clamp(1.5rem, 11vw, 8rem);
-    color: #003f7d;
+    color: #fff;
+    mix-blend-mode: difference;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -36,7 +42,8 @@
   }
   .label {
     font-size: 0.2em;
-    color: #0f4196;
+    line-height: 1.4;
+    color: inherit;
     margin-top: 0.2em;
   }
   .sep {
@@ -46,14 +53,16 @@
 </style>
 </head>
 <body>
-  <div id="countdown" aria-live="off">
-    <div class="unit"><span class="num" id="d">00</span><span class="label">Days</span></div>
-    <span class="sep">:</span>
-    <div class="unit"><span class="num" id="h">00</span><span class="label">Hours</span></div>
-    <span class="sep">:</span>
-    <div class="unit"><span class="num" id="m">00</span><span class="label">Minutes</span></div>
-    <span class="sep">:</span>
-    <div class="unit"><span class="num" id="s">00</span><span class="label">Seconds</span></div>
+  <div class="stage">
+    <div id="countdown" aria-live="off">
+      <div class="unit"><span class="num" id="d">00</span><span class="label">Days</span></div>
+      <span class="sep">:</span>
+      <div class="unit"><span class="num" id="h">00</span><span class="label">Hours</span></div>
+      <span class="sep">:</span>
+      <div class="unit"><span class="num" id="m">00</span><span class="label">Minutes</span></div>
+      <span class="sep">:</span>
+      <div class="unit"><span class="num" id="s">00</span><span class="label">Seconds</span></div>
+    </div>
   </div>
 <script>
   const ziel = new Date("2027-01-11T00:00:00+01:00");
