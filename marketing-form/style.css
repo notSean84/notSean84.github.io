@@ -268,7 +268,8 @@
     }
 
     .dwYSlG {
-        background-color: rgb(123, 177, 61);
+        /* rgb(123, 177, 61) */
+        background-color: #0F4196;
         border-width: medium;
         border-style: none;
         border-color: currentcolor;
