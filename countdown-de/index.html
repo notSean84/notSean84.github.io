@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @font-face {
+      font-family: "Faktum";
+      src: url("Rene%20Bieder%20-%20Faktum%20SemiBold.otf") format("opentype");
+      font-display: swap;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+    }
+
+    .stage {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      background: #dde2e9 url("bg.jpg") center / cover no-repeat;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .wrap {
+      position: relative;
+    }
+
+    .cd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: "Faktum", "DIN Alternate", Arial, sans-serif;
+      font-size: clamp(1.5rem, 11vw, 8rem);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .cd:not(.base) {
+      position: absolute;
+      inset: 0;
+    }
+
+    .cd.base   { color: #fff;    mix-blend-mode: difference; }
+    .cd.tint   { color: #0F4196; mix-blend-mode: color; }
+    
+    .cd.dark   { color: #0F4196; mix-blend-mode: color; }
+    .cd.labels { color: #FFFFFF; }
+
+     /*#0F4196*/
+    /* Labels nur in der Label-Ebene sichtbar, Zahlen dort unsichtbar */
+    .base .label,
+    .tint .label,
+    .dark .label {
+      visibility: hidden;
+    }
+
+    .labels .num,
+    .labels .sep {
+      visibility: hidden;
+    }
+
+    .unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .num {
+      line-height: 1.1;
+    }
+
+    .label {
+      font-size: 0.2em;
+      line-height: 1.4;
+      color: inherit;
+      margin-top: 0.2em;
+      /*text-shadow: 0 0 0.2em #FFFFFF;*/
+      background: #051939;
+      padding: 0.1em 0.4em;
+    }
+
+    .sep {
+      line-height: 1.1;
+      padding: 0 0.25em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stage">
+    <div class="wrap">
+      <div class="cd base" aria-live="off">
+        <div class="unit"><span class="num" data-u="d">00</span><span class="label">Tage</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="h">00</span><span class="label">Stunden</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="m">00</span><span class="label">Minuten</span></div>
+        <span class="sep">:</span>
+        <div class="unit"><span class="num" data-u="s">00</span><span class="label">Sekunden</span></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Ebenen duplizieren (Reihenfolge nicht ändern: Labels müssen zuletzt kommen)
+    const base = document.querySelector(".cd.base");
+    ["tint", "dark", "labels"].forEach(c => {
+      const n = base.cloneNode(true);
+      n.classList.replace("base", c);
+      n.removeAttribute("aria-live");
+      n.setAttribute("aria-hidden", "true");
+      base.parentNode.appendChild(n);
+    });
+
+    const ziel = new Date("2027-01-11T00:00:00+01:00");
+    const p = n => String(n).padStart(2, "0");
+    const set = (u, v) => document.querySelectorAll(`[data-u="${u}"]`).forEach(e => e.textContent = v);
+
+    function tick() {
+      let d = Math.max(0, ziel - new Date());
+      const tage = Math.floor(d / 864e5); d %= 864e5;
+      const std = Math.floor(d / 36e5); d %= 36e5;
+      const min = Math.floor(d / 6e4); d %= 6e4;
+      const sek = Math.floor(d / 1e3);
+      set("d", p(tage));
+      set("h", p(std));
+      set("m", p(min));
+      set("s", p(sek));
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+
+</html>
